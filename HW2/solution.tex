@@ -1,6 +1,18 @@
 \documentclass[11pt, reqno, letterpaper, twoside]{amsart}
 \linespread{1.2}
 \usepackage[margin=1.25in]{geometry}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\lstset{
+  basicstyle=\ttfamily\footnotesize,
+  keywordstyle=\color{blue},
+  commentstyle=\color{gray},
+  stringstyle=\color{teal},
+  breaklines=true,
+  frame=single,
+  showstringspaces=false
+}
 
 \usepackage{amssymb, bm, mathtools,physics}
 \usepackage[usenames,dvipsnames,svgnames,table]{xcolor}
@@ -61,4 +73,39 @@ Collaborators: Harry Guan [Harryg1@seas]
 \subsubsection*{(d) - times spent 7 minutes}
 Weight decay, or L2 regularization, penalizes large weights by adding a term proportional to the square of their magnitude to the loss function. This helps prevent overfitting by discouraging overly complex models. However, applying weight decay to bias terms is not appropriate because biases simply shift the activation functions and do not control the capacity or smoothness of the model in the same way as weights do. Penalizing them can lead to underfitting or prevent the model from properly centering its activations.
 \subsubsection*{(e) - times spent 7 minutes}
+\begin{lstlisting}[language=Python, label={lst:resnet18_params}]
+import torch
+import torch.nn as nn
+import torchvision.models as models
+
+# Load the ResNet-18 model
+model = models.resnet18(weights=None)
+
+# Initialize parameter groups
+bn_params = []          # (i) BatchNorm affine transform parameters
+bias_params = []        # (ii) Biases of conv and fc layers
+other_params = []       # (iii) All the rest
+
+# Iterate over all modules and parameters
+for module in model.modules():
+    if isinstance(module, nn.BatchNorm2d):
+        # BatchNorm affine parameters (weight and bias)
+        bn_params.extend([module.weight, module.bias])
+    elif isinstance(module, (nn.Conv2d, nn.Linear)):
+        # Bias parameters of conv and fully connected layers
+        if module.bias is not None:
+            bias_params.append(module.bias)
+        # The rest (usually weights)
+        other_params.append(module.weight)
+    else:
+        # Any remaining parameters that dont fit above
+        for param in module.parameters(recurse=False):
+            other_params.append(param)
+
+# Print summary of parameter counts
+print(f"BatchNorm affine parameters: {sum(p.numel() for p in bn_params)}")
+print(f"Bias parameters: {sum(p.numel() for p in bias_params)}")
+print(f"All other parameters: {sum(p.numel() for p in other_params)}")
+\end{lstlisting}
+
 \end{document}
