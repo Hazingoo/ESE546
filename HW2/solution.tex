@@ -1,0 +1,64 @@
+\documentclass[11pt, reqno, letterpaper, twoside]{amsart}
+\linespread{1.2}
+\usepackage[margin=1.25in]{geometry}
+
+\usepackage{amssymb, bm, mathtools,physics}
+\usepackage[usenames,dvipsnames,svgnames,table]{xcolor}
+\usepackage[pdftex, xetex]{graphicx}
+\usepackage{enumerate, setspace}
+\usepackage{float, colortbl, tabularx, longtable, multirow, subcaption, environ, wrapfig, textcomp, booktabs}
+\usepackage{float}
+\usepackage{placeins}
+\usepackage{pgf, tikz, framed}
+\usepackage[normalem]{ulem}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\lstset{
+    language=Python, % Specify the programming language
+    backgroundcolor=\color{lightgray}, % Background color
+    commentstyle=\color{green!50!black}, % Color for comments
+    keywordstyle=\color{blue}, % Color for keywords
+    stringstyle=\color{red}, % Color for strings
+    numbers=left, % Line numbering on the left
+    numberstyle=\tiny\color{gray}, % Style for line numbers
+    frame=single, % Add a frame around the code block
+    breaklines=true, % Allow line breaks within code
+    tabsize=4, % Tab size
+    showspaces=false, % Do not show spaces
+    showtabs=false, % Do not show tabs
+    captionpos=b, % Caption position at the bottom
+    basicstyle=\ttfamily\small % Font style
+}
+
+\usetikzlibrary{arrows,positioning,automata,shadows,fit,shapes}
+\usepackage[english]{babel}
+
+\usepackage[final]{microtype}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+
+\theoremstyle{definition}
+\newtheorem{solution}[theorem]{Solution}
+
+\usepackage{times}
+\title{ESE 546\\[0.1in]
+Homework 2}
+\author{
+Harry Guan [Harryg1@seas],\\
+Collaborators: Harry Guan [Harryg1@seas]
+}
+
+\begin{document}
+\maketitle
+
+\subsection*{Problem 1}
+
+\subsubsection*{(a) - times spent 7 minutes} In the given ResNet code, the batch normalization (BN) layer is applied before the ReLU activation, following the sequence Conv → BN → ReLU. This design choice is intentional and generally considered better practice. Applying BN before ReLU ensures that the activations passed into the nonlinearity have a normalized distribution with zero mean and unit variance, which helps stabilize training and improves convergence. If BN were placed after ReLU, many activations would become zero due to ReLU’s thresholding, leading to inaccurate mean and variance estimates. As a result, placing BN before ReLU allows the network to maintain more consistent feature scaling and achieve better overall performance.
+\subsubsection*{(b) - times spent 7 minutes} The calls model.train() and model.eval() in PyTorch are used to switch the model between training and evaluation modes. During training, model.train() enables layers like dropout and batch normalization to behave in their training state—dropout randomly zeroes activations, and batch norm updates its running statistics. In contrast, model.eval() sets these layers to evaluation mode, where dropout is disabled and batch norm uses its learned running averages instead of batch statistics. These calls are important to ensure consistent behavior during validation or testing. In HW1, we didn’t include them because our custom library was a simpler implementation that didn’t have layers like dropout or batch normalization, so there was no need to change the model’s behavior between training and evaluation phases.
+\subsubsection*{(c) - times spent 7 minutes}
+\subsubsection*{(d) - times spent 7 minutes}
+Weight decay, or L2 regularization, penalizes large weights by adding a term proportional to the square of their magnitude to the loss function. This helps prevent overfitting by discouraging overly complex models. However, applying weight decay to bias terms is not appropriate because biases simply shift the activation functions and do not control the capacity or smoothness of the model in the same way as weights do. Penalizing them can lead to underfitting or prevent the model from properly centering its activations.
+\subsubsection*{(e) - times spent 7 minutes}
+\end{document}
