@@ -108,4 +108,103 @@ print(f"Bias parameters: {sum(p.numel() for p in bias_params)}")
 print(f"All other parameters: {sum(p.numel() for p in other_params)}")
 \end{lstlisting}
 
+
+\subsection*{Problem 2}
+\subsubsection*{(a) - times spent 7 minutes}
+\textbf{Solution:}  
+We want to show that the optimization problem
+\[
+\min_{A \in \mathbb{R}^{m \times r},\, B \in \mathbb{R}^{r \times n}} \|X - AB\|_F^2
+\]
+is not convex.
+
+\smallskip
+
+Consider the simplest scalar case where \( m = n = r = 1 \) and \( X = 1 \).  
+Then the problem reduces to minimizing
+\[
+f(a,b) = (1 - ab)^2
+\]
+over \( a, b \in \mathbb{R} \).
+
+Choose two points:
+\[
+(a_1, b_1) = (1, 1), \quad (a_2, b_2) = (-1, -1).
+\]
+We have
+\[
+f(a_1, b_1) = (1 - 1)^2 = 0, \quad f(a_2, b_2) = (1 - (-1)(-1))^2 = 0.
+\]
+
+Now consider their midpoint:
+\[
+\left(\frac{a_1 + a_2}{2}, \frac{b_1 + b_2}{2}\right) = (0, 0),
+\]
+for which
+\[
+f(0, 0) = (1 - 0)^2 = 1.
+\]
+
+If \(f(a,b)\) were convex, we would have
+\[
+f\!\left(\frac{(a_1,b_1)+(a_2,b_2)}{2}\right)
+\le \frac{1}{2}f(a_1,b_1) + \frac{1}{2}f(a_2,b_2) = 0.
+\]
+However, \( f(0,0) = 1 > 0 \), which violates convexity.
+
+\smallskip
+
+\textbf{Therefore, the function \( \|X - AB\|_F^2 \) is not convex in the joint variables \( (A,B) \).}  
+(It is convex in \(A\) when \(B\) is fixed, and vice versa, but not jointly convex.)
+
+\subsubsection*{(b) - times spent 7 minutes}
+Let \( X = U \Sigma V^\top \) be the singular value decomposition (SVD) of \( X \), where
+\[
+\Sigma = \operatorname{diag}(\sigma_1, \sigma_2, \dots, \sigma_p), \quad \sigma_1 \ge \sigma_2 \ge \dots \ge \sigma_p \ge 0, \quad p = \min(m, n).
+\]
+Partition
+\[
+U = [U_r \; U_\perp], \quad V = [V_r \; V_\perp], \quad \Sigma = \begin{bmatrix} \Sigma_r & 0 \\ 0 & \Sigma_\perp \end{bmatrix},
+\]
+where \( \Sigma_r = \operatorname{diag}(\sigma_1, \dots, \sigma_r) \).
+
+The global optimum of
+\[
+\min_{A \in \mathbb{R}^{m \times r},\, B \in \mathbb{R}^{r \times n}} \| X - AB \|_F^2
+\]
+is achieved at
+\[
+A^\star = U_r \Sigma_r^{1/2}, \quad B^\star = \Sigma_r^{1/2} V_r^\top.
+\]
+Then
+\[
+A^\star B^\star = U_r \Sigma_r V_r^\top,
+\]
+which is the rank-\(r\) truncated SVD of \(X\).
+
+The minimum value of the objective function is
+\[
+\min_{A,B} \| X - AB \|_F^2 = \sum_{i = r+1}^{p} \sigma_i^2.
+\]
+\subsubsection*{(c) - times spent 7 minutes}
+The solution to the optimization problem is not unique.
+
+While the optimal product \( Y^\star = A^\star B^\star = U_r \Sigma_r V_r^\top \) is unique when there is a spectral gap 
+\( \sigma_r > \sigma_{r+1} \), the individual factors \( A^\star \) and \( B^\star \) are not unique. 
+
+For any invertible matrix \( Q \in \mathbb{R}^{r \times r} \),
+\[
+A' = A^\star Q, \qquad B' = Q^{-1} B^\star
+\]
+is also an optimal solution since
+\[
+A' B' = (A^\star Q)(Q^{-1} B^\star) = A^\star B^\star.
+\]
+
+Hence, infinitely many pairs \( (A', B') \) achieve the same minimum objective value.  
+A simple special case is obtained by choosing \( Q = \operatorname{diag}(c_1, \dots, c_r) \),  
+which scales each column of \( A^\star \) by \( c_i \) and divides the corresponding row of \( B^\star \) by \( c_i \),  
+producing another valid optimal factorization.
+
+
 \end{document}
