@@ -1,3 +1,5 @@
+import torch.nn as nn
+
 class View(nn.Module):
     def __init__(self,o):
         super().__init__()
