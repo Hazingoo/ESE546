@@ -137,20 +137,9 @@ def print_augmentation_parameters():
     print("Equalize: histogram equalization")
 
 if __name__ == '__main__':
-    print("Loading test image...")
+    print("Loading test image")
     image = load_astronaut_image()
-    print(f"Image size: {image.size}")
-    
-    print("Applying augmentations...")
     results = apply_augmentations(image)
-    
-    print("Creating visualization...")
     create_augmentation_grid(results)
-    
     print_augmentation_parameters()
     
-    print("\n=== Summary ===")
-    print("✓ Applied 10 different augmentations")
-    print("✓ Used reasonable parameter values")
-    print("✓ Generated visualization grid")
-    print("✓ Ready for PDF submission with parameter annotations")
