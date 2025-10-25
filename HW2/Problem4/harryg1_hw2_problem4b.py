@@ -7,7 +7,7 @@ import numpy as np
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-from part_a_simple import get_text, get_vocab, char_to_index, onehot_encode
+from harryg1_hw2_problem4a import get_text, get_vocab, char_to_index, onehot_encode
 
 class CharRNN(nn.Module):
     def __init__(self, vocab_size, hidden_size=128):
@@ -161,8 +161,16 @@ if __name__ == '__main__':
             
             # Report metrics every 1000 weight updates 
             if weight_update_count % 1000 == 0:
-                train_losses_by_updates.append(loss.item())
-                train_errors_by_updates.append(error.item())
+                # Calculate running averages for smoother curves
+                if len(train_losses_by_updates) == 0:
+                    train_losses_by_updates.append(loss.item())
+                    train_errors_by_updates.append(error.item())
+                else:
+                    # Exponential moving average for smoothing
+                    alpha = 0.1  
+                    train_losses_by_updates.append(alpha * loss.item() + (1-alpha) * train_losses_by_updates[-1])
+                    train_errors_by_updates.append(alpha * error.item() + (1-alpha) * train_errors_by_updates[-1])
+                
                 weight_updates_list.append(weight_update_count)
                 
                 # Calculate validation metrics
@@ -176,10 +184,15 @@ if __name__ == '__main__':
                     _, val_predicted = torch.max(val_last_output, 1)
                     val_error = (val_predicted != val_targets).float().mean()
                     
-                    val_losses_by_updates.append(val_loss.item())
-                    val_errors_by_updates.append(val_error.item())
+                    if len(val_losses_by_updates) == 0:
+                        val_losses_by_updates.append(val_loss.item())
+                        val_errors_by_updates.append(val_error.item())
+                    else:
+                        alpha = 0.1  
+                        val_losses_by_updates.append(alpha * val_loss.item() + (1-alpha) * val_losses_by_updates[-1])
+                        val_errors_by_updates.append(alpha * val_error.item() + (1-alpha) * val_errors_by_updates[-1])
                     
-                    print('Weight Update', weight_update_count, ': Train Loss =', loss.item(), ', Train Error =', error.item(), ', Val Loss =', val_loss.item(), ', Val Error =', val_error.item())
+                    print('Weight Update', weight_update_count, ': Train Loss =', train_losses_by_updates[-1], ', Train Error =', train_errors_by_updates[-1], ', Val Loss =', val_losses_by_updates[-1], ', Val Error =', val_errors_by_updates[-1])
                 model.train()
         
         # Calculate average metrics for this epoch
@@ -262,3 +275,7 @@ if __name__ == '__main__':
     # Print final results
     print('Final validation loss:', val_losses[-1])
     print('Final validation error:', val_errors[-1])
+    
+    # Save trained model
+    torch.save(model.state_dict(), 'harryg1_hw2_problem4b.pth')
+    print('Model saved as harryg1_hw2_problem4b.pth')
