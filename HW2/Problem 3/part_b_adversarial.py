@@ -88,8 +88,8 @@ def visualize_gradients(model, testloader, criterion):
     plt.savefig('gradient_visualization.png', dpi=300, bbox_inches='tight')
     plt.show()
     
-    print(f"Correct avg grad: {np.mean([np.mean(g) for g in correct_gradients]):.4f}")
-    print(f"Incorrect avg grad: {np.mean([np.mean(g) for g in incorrect_gradients]):.4f}")
+    print(f"Correct avg grad: {np.mean([np.mean(g) for g in correct_gradients])}")
+    print(f"Incorrect avg grad: {np.mean([np.mean(g) for g in incorrect_gradients])}")
 
 def signed_gradient_attack(model, x, y, criterion, epsilon=8, steps=5):
     # Convert epsilon from pixel space to normalized space
@@ -113,7 +113,7 @@ def signed_gradient_attack(model, x, y, criterion, epsilon=8, steps=5):
         
         with torch.no_grad():
             x_perturbed = x_perturbed + eps_tensor * dx.sign()
-            # Clamp to normalized space bounds, not [0,1]
+            # Clamp to normalized space bounds 
             x_perturbed = torch.max(torch.min(x_perturbed, MAX_NORM_T), MIN_NORM_T)
             
             y_pred_perturbed = model(x_perturbed)
@@ -144,15 +144,15 @@ def adversarial_attack_analysis(model, testloader, criterion):
     plt.plot(range(1, 6), avg_losses, 'b-o', linewidth=2, markersize=8)
     plt.xlabel('Attack Step')
     plt.ylabel('Average Loss')
-    plt.title('Loss vs Attack Steps (ε=8)')
+    plt.title('Loss vs Attack Steps')
     plt.grid(True)
     plt.tight_layout()
     plt.savefig('adversarial_attack_results.png', dpi=300, bbox_inches='tight')
     plt.show()
     
-    print(f"Initial loss: {avg_losses[0]:.4f}")
-    print(f"Final loss: {avg_losses[-1]:.4f}")
-    print(f"Loss increase: {avg_losses[-1] - avg_losses[0]:.4f}")
+    print(f"Initial loss: {avg_losses[0]}")
+    print(f"Final loss: {avg_losses[-1]}")
+    print(f"Loss increase: {avg_losses[-1] - avg_losses[0]}")
     
     return avg_losses
 
