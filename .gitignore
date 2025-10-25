@@ -1,0 +1,6 @@
+# Data directories (downloaded automatically)
+data/
+*/data/
+*.tar.gz
+*.pth
+*.png
